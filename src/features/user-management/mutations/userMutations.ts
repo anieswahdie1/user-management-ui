@@ -12,6 +12,9 @@ export const useCreateUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
+    onError: (error) => {
+      console.error("Error creating user:", error);
+    },
   });
 };
 
@@ -20,7 +23,25 @@ export const useDeleteUser = () => {
 
   return useMutation<void, Error, number>({
     mutationFn: userApi.deleteUser,
-    onSuccess: () => {
+    onMutate: (userId) => {
+      const previousUsers =
+        queryClient.getQueryData<User[]>(userKeys.lists()) || [];
+
+      queryClient.setQueryData<User[]>(userKeys.lists(), (old = []) =>
+        old.filter((user) => user.id !== userId)
+      );
+
+      return { previousUsers };
+    },
+    onError: (err, userId, context: any) => {
+      console.error("Error deleting user:", err);
+
+      if (context?.previousUsers) {
+        queryClient.setQueryData(userKeys.lists(), context.previousUsers);
+      }
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
   });

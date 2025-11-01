@@ -4,8 +4,8 @@ export const API_CONFIG = {
 } as const;
 
 export const QUERY_CONFIG = {
-  STALE_TIME: 5 * 60 * 1000, // 5 minutes
-  CACHE_TIME: 10 * 60 * 1000, // 10 minutes
+  STALE_TIME: 5 * 60 * 1000,
+  CACHE_TIME: 10 * 60 * 1000,
   RETRY: 1,
   RETRY_DELAY: 1000,
 } as const;
